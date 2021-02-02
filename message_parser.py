@@ -1,97 +1,130 @@
 class MessageParser:
+    start_symbol = b'%'
+    end_symbol = b'@'
+    separator_symbol = b'_'
+
+    num_size = 3
+    color_size = 6
+
+    cmd_clear_display = b'cd'
+    cmd_draw_pixel = b'dp'
+    cmd_draw_line = b'dl'
+    cmd_draw_rectangle = b'dr'
+    cmd_fill_rectangle = b'fr'
+    cmd_draw_ellipse = b'de'
+    cmd_fill_ellipse = b'fe'
+
     def __init__(self):
-        self.__message = None
-        self.__command_types = {
-            'cd': 0,
-            'dp': 2,
-            'dl': 4,
-            'dr': 4,
-            'fr': 4,
-            'de': 4,
-            'fe': 4
-        }
-        self.__parsed_commands = []
-        self.__command_attributes = []
+        self._command = None
+        self._args = None
+        self._error = False
+        self._message = None
 
-        self.__start_symbol = '%'
-        self.__end_symbol = '@'
-        self.__command_size = 2  # =2
-        self.__num_attribute_limit = 4  # <4
-        self.__colour_attribute_size = 6  # =6
-        self.__numbers = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-        self.__24bit_symbols = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+        self._commands = [
+            (self.cmd_clear_display,
+             self._parse_color),
+            (self.cmd_draw_pixel,
+             self._parse_number, self._parse_number, self._parse_color),
+            (self.cmd_draw_line,
+             self._parse_number, self._parse_number, self._parse_number, self._parse_number, self._parse_color),
+            (self.cmd_draw_rectangle,
+             self._parse_number, self._parse_number, self._parse_number, self._parse_number, self._parse_color),
+            (self.cmd_fill_rectangle,
+             self._parse_number, self._parse_number, self._parse_number, self._parse_number, self._parse_color),
+            (self.cmd_draw_ellipse,
+             self._parse_number, self._parse_number, self._parse_number, self._parse_number, self._parse_color),
+            (self.cmd_fill_ellipse,
+             self._parse_number, self._parse_number, self._parse_number, self._parse_number, self._parse_color)
+        ]
 
-    @property
-    def message(self):
-        return self.__message
+    command = property(lambda self: self._command)
+    args = property(lambda self: self._args)
+    error = property(lambda self: self._error)
+    message = property(lambda self: self._message)
 
-    @message.setter
-    def message(self, value: str):
-        self.__message = value
-
-    def parse(self):
-        result = self.__state_1(index=0)
-
-        if result:
-            result = self.__parsed_commands
-        else:
-            print('Command specification is violated')
-
-        self.__parsed_commands = []
+    def _parse_number(self, text):
+        result = None
+        if text and len(text) <= self.num_size and text.isdigit():
+            result = int(text)
         return result
 
-    def __state_1(self, index):
-        if self.__message[index] == self.__start_symbol:
-            index += 1
-            return self.__state_2(index)
-        else:
-            return False
+    def _parse_color(self, text):
+        result = None
+        if (len(text) == self.color_size) and self._ishexnumber(text):
+            result = text
+        return result
 
-    def __state_2(self, index):
-        if self.__message[index + self.__command_size] == '_' and self.__message[index:index + self.__command_size] in self.__command_types:
-            self.__command_attributes.append(self.__message[index:index + self.__command_size])
-            num_of_attributes = self.__command_types[self.__message[index:index + self.__command_size]]
-            index += self.__command_size + 1
-            return self.__state_3(index, num_of_attributes)
-        else:
-            return False
+    def _ishexnumber(self, text):
+        hexdigits = b'01234567890abcdefABCDEF'
+        return all(c in hexdigits for c in text)
 
-    def __state_3(self, index, num_of_attributes):
-        for i in range(num_of_attributes):
-            for j in range(self.__num_attribute_limit):
-                if self.__message[index + j] == '_':
-                    if j == 0:
-                        return False
-                    else:
-                        command_num_attribute = int(self.__message[index:index+j])
-                        self.__command_attributes.append(command_num_attribute)
-                        index += j + 1
-                        break
+    def parse(self, text):
+        if (text[:1] != self.start_symbol) or (text[-1:] != self.end_symbol):
+            self._error = True
+            self._message = 'Not found begin or end char'
+            return
+        #
+        text = text[1:-1]
+        line = text.split(self.separator_symbol)
+        if not line:
+            self._error = True
+            self._message = 'Empty command'
+            return
+        #
+        for item in self._commands:
+            if line[0] != item[0]:
+                continue
+            if len(item) != len(line):
+                self._error = True
+                self._message = 'Number of params for command %s must be %s' % (item[0], len(item) - 1)
+                break
+            #
+            args = []
+            for i, (t_arg, arg_parser) in enumerate(map(lambda x, y: (x, y), line[1:], item[1:])):
+                arg = arg_parser(t_arg)
+                if arg is not None:
+                    args.append(arg)
+                else:
+                    self._error = True
+                    self._message = 'Bad argument #%s %s' % (i, t_arg)
+                    break
+            if not self._error:
+                self._command = item[0]
+                self._args = tuple(args)
+            break
 
-                if self.__message[index + j] not in self.__numbers:
-                    return False
-                if j == 3 and self.__message[index + j] != '_':
-                    return False
+        if (not self._error) and (self._command is None):
+            self._error = True
+            self._message = 'Command %s not found' % line[0]
 
-        return self.__state_4(index)
 
-    def __state_4(self, index):
-        for i in range(self.__colour_attribute_size):
-            if self.__message[index + i] not in self.__24bit_symbols:
-                return False
-        self.__command_attributes.append(self.__message[index:index+6])
-        index += 6
-        return self.__state_5(index)
+def _test(text):
+    parser = MessageParser()
+    parser.parse(text)
 
-    def __state_5(self, index):
-        if self.__message[index] != self.__end_symbol:
-            return False
+    print('packet:', text)
+    if parser.error:
+        print('Error: ', parser.message)
+    else:
+        print('command:', parser.command, parser.args)
 
-        self.__parsed_commands.append(self.__command_attributes)
-        self.__command_attributes = []
 
-        if index + 1 == len(self.__message):
-            return True
-        else:
-            index += 1
-            return self.__state_1(index)
+if __name__ == '__main__':
+    _test(b'%cd_000000@')
+
+    _test(b'%dp_100_200_000001@')
+    _test(b'%dl_130_240_10_20_000001@')
+
+    _test(b'%dr_100_200_300_300_000002@')
+    _test(b'%fr_100_200_300_300_000003@')
+
+    _test(b'%de_100_200_30_20_000004@')
+    _test(b'%fe_100_200_40_50_000005@')
+
+    _test(b'%c0_000000@')
+    _test(b'%cd_000000')
+    _test(b'cd_000000@')
+    _test(b'%cd_12_000000@')
+    _test(b'%fe_100_200_40_000005@')
+    _test(b'%cd_00000w@')
+    _test(b'%fe_100_a200_40_50_000005@')
