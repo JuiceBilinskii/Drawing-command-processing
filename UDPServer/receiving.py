@@ -1,4 +1,5 @@
 import socket
+import time
 from message_parser import MessageParser
 from command_builder import CommandBuilder
 
@@ -22,7 +23,9 @@ while True:
     if parser.error:
         print(parser.message)
     else:
-        print(parser.command, parser.args)
+        print('Received command: ', parser.command, parser.args)
+
+    # time.sleep(2)
 
     # ready_commands = builder.build_commands(parsed_attributes)
 
