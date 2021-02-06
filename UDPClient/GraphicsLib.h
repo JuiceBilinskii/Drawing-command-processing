@@ -14,7 +14,7 @@
 class GraphicsLib
 {
 public:
-    GraphicsLib(uint_least16_t w, uint_least16_t h, SOCKET* s, sockaddr* dest) : width(w), height(h), socket(s), dest(dest) {};
+    GraphicsLib(uint_least16_t w, uint_least16_t h) : width(w), height(h) {};
 
     int_least16_t getWidth(void) { return width; };
     int_least16_t getHeight(void) { return height; };
@@ -29,10 +29,6 @@ public:
 
 private:
     int_least16_t width, height; //screen size
-
-protected:
-    SOCKET* socket;
-    sockaddr* dest;
 };
 
 #endif //GraphicsLib_h

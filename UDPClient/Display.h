@@ -12,7 +12,7 @@
 class Display : public GraphicsLib
 {
 public:
-    Display(uint_least16_t w, uint_least16_t h, SOCKET* s, sockaddr* dest) : GraphicsLib(w, h, s, dest) {};
+    Display(uint_least16_t w, uint_least16_t h, SOCKET* s, sockaddr* dest) : GraphicsLib(w, h), socket(s), dest(dest) {};
 
     void clearDisplay(uint_least32_t color)
     {
@@ -61,6 +61,9 @@ public:
 private:
     static const unsigned char buffer_length = 50;
     char buffer[buffer_length];
+
+    SOCKET* socket;
+    sockaddr* dest;
 
     void sendCommand(const char* command) {
         sendto(*socket, command, strlen(command), 0, dest, sizeof(*dest));
