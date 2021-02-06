@@ -4,15 +4,17 @@
 #define GraphicsLib_h
 
 #include <stdint.h>
+#include <Ws2tcpip.h>
 
-#ifndef RGB
+
+#ifndef RGBConverter
 #define RGBConverter(r,g,b) (((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff))) //from rgb to 24-bit color code
 #endif
 
 class GraphicsLib
 {
 public:
-    GraphicsLib(uint_least16_t w, uint_least16_t h) : width(w), height(h) {};
+    GraphicsLib(uint_least16_t w, uint_least16_t h, SOCKET* s, sockaddr* dest) : width(w), height(h), socket(s), dest(dest) {};
 
     int_least16_t getWidth(void) { return width; };
     int_least16_t getHeight(void) { return height; };
@@ -27,6 +29,10 @@ public:
 
 private:
     int_least16_t width, height; //screen size
+
+protected:
+    SOCKET* socket;
+    sockaddr* dest;
 };
 
 #endif //GraphicsLib_h

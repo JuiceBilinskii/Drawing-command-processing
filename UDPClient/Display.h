@@ -6,12 +6,13 @@
 #include <iostream>
 #include "stdio.h"
 
+
 #include "GraphicsLib.h"
 
 class Display : public GraphicsLib
 {
 public:
-    Display(uint_least16_t w, uint_least16_t h) : GraphicsLib(w, h) {};
+    Display(uint_least16_t w, uint_least16_t h, SOCKET* s, sockaddr* dest) : GraphicsLib(w, h, s, dest) {};
 
     void clearDisplay(uint_least32_t color)
     {
@@ -62,6 +63,7 @@ private:
     char buffer[buffer_length];
 
     void sendCommand(const char* command) {
+        sendto(*socket, command, strlen(command), 0, dest, sizeof(*dest));
         std::cout << "sendCommand: " << command << std::endl;
     }
 };

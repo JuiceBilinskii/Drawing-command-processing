@@ -16,10 +16,6 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    
-    Display display = Display(320, 240);
-    std::cout << "width: " << display.getWidth() << " height: " << display.getHeight() << std::endl;
-
     /*
     display.clearDisplay(RGBConverter(255, 0, 0));
 
@@ -35,7 +31,7 @@ int main(int argc, char** argv)
     return 0;
     */
 
-    display.drawLine(100, 150, 200, 250, RGBConverter(0, 255, 0));
+    
 
     sockaddr_in dest;
     sockaddr_in local;
@@ -56,8 +52,29 @@ int main(int argc, char** argv)
     // bind to the local address
     bind(s, (sockaddr*)&local, sizeof(local));
 
-    // send the message
-    sendto(s, display.getCommand(), strlen(display.getCommand()), 0, (sockaddr*)&dest, sizeof(dest));
+
+
+    Display display = Display(320, 240, (SOCKET*)&s, (sockaddr*)&dest);
+    std::cout << "width: " << display.getWidth() << " height: " << display.getHeight() << std::endl;
+
+    display.drawLine(700, 200, 10, 15, RGBConverter(145, 255, 122));
+    display.drawEllipse(110, 120, 130, 140, RGBConverter(20, 0, 0));
+    display.fillEllipse(12, 20, 30, 20, RGBConverter(30, 30, 30));
+
+
+
+    /*
+    display.drawLine(700, 200, 10, 15, RGBConverter(145, 255, 122));
+
+
+    for (int i = 0; i < 4; i++)
+    {
+        // send the message
+        sendto(s, display.getCommand(), strlen(display.getCommand()), 0, (sockaddr*)&dest, sizeof(dest));
+
+        display.drawEllipse(110, 120, 130, 140, RGBConverter(20, 0, 0));
+    }
+    */
 
     closesocket(s);
     WSACleanup();
