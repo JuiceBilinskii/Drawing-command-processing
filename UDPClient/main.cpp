@@ -57,9 +57,9 @@ int main(int argc, char** argv)
     Display display = Display(320, 240, (SOCKET*)&s, (sockaddr*)&dest);
     std::cout << "width: " << display.getWidth() << " height: " << display.getHeight() << std::endl;
 
-    display.drawLine(700, 200, 10, 15, RGBConverter(145, 255, 122));
-    display.drawEllipse(110, 120, 130, 140, RGBConverter(20, 0, 0));
-    display.fillEllipse(12, 20, 30, 20, RGBConverter(30, 30, 30));
+    display.drawLine(700, 200, 10, 15, bit16RGBConverter(255, 255, 255));
+    display.drawEllipse(110, 120, 130, 140, bit16RGBConverter(34, 67, 78));
+    display.fillEllipse(12, 20, 30, 20, bit16RGBConverter(30, 30, 30));
 
 
 
