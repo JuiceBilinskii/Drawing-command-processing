@@ -17,6 +17,7 @@ class MessageParser:
     def __init__(self):
         self._command = None
         self._args = None
+        self._parsed_message = None
         self._error = False
         self._message = None
 
@@ -39,6 +40,7 @@ class MessageParser:
 
     command = property(lambda self: self._command)
     args = property(lambda self: self._args)
+    parsed_message = property(lambda self: self._parsed_message)
     error = property(lambda self: self._error)
     message = property(lambda self: self._message)
 
@@ -91,6 +93,7 @@ class MessageParser:
             if not self._error:
                 self._command = item[0]
                 self._args = tuple(args)
+                self._parsed_message = self._command, *self._args
             break
 
         if (not self._error) and (self._command is None):
@@ -106,7 +109,7 @@ def _test(text):
     if parser.error:
         print('Error: ', parser.message)
     else:
-        print('command:', parser.command, parser.args)
+        print('command:', parser.parsed_message)
 
 
 if __name__ == '__main__':

@@ -23,7 +23,7 @@ while True:
     if parser.error:
         print(parser.message)
     else:
-        print('Received command: ', parser.command, parser.args)
+        print('Received command: ', parser.parsed_message)
 
     # time.sleep(2)
 
