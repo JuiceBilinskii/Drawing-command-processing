@@ -29,6 +29,7 @@ def receiving():
             drawer.draw(CommandConverter.convert_command(parser.parsed_message))
             image_tk = ImageTk.PhotoImage(image)
 
+            canvas.delete('all')
             canvas.create_image(150, 100, image=image_tk)
             print('Received command: ', parser.parsed_message)
 
