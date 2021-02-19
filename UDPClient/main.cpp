@@ -57,10 +57,49 @@ int main(int argc, char** argv)
     Display display = Display(320, 240, (SOCKET*)&s, (sockaddr*)&dest);
     std::cout << "width: " << display.getWidth() << " height: " << display.getHeight() << std::endl;
 
-    display.drawLine(700, 200, 10, 15, bit16RGBConverter(255, 255, 255));
-    display.drawEllipse(110, 120, 130, 140, bit16RGBConverter(34, 67, 78));
-    display.fillEllipse(12, 20, 30, 20, bit16RGBConverter(30, 30, 30));
+    for (int i = 0; i < 10; i++)
+    {
+        display.fillScreen(bit16RGBConverter(0, 0, 0));
+        //display.drawLine(70, 110, 10, 15, bit16RGBConverter(255, 0, 150));
+        //display.drawEllipse(110, 120, 130, 140, bit16RGBConverter(0, 220, 78));
+        //display.fillEllipse(0, 0, 60, 60, bit16RGBConverter(255, 255, 0));
+        display.fillEllipse(250, 50, 60, 60, bit16RGBConverter(255, 255, 0));
+        display.fillEllipse(265, 50, 50, 50, bit16RGBConverter(0, 0, 0));
 
+        //голова
+        display.fillEllipse(150, 100, 30, 30, bit16RGBConverter(255, 255, 255));
+        display.fillRect(140, 105, 20, 3, bit16RGBConverter(0, 0, 0));
+        display.fillEllipse(140, 100, 4, 4, bit16RGBConverter(0, 0, 0));
+        display.fillEllipse(160, 100, 4, 4, bit16RGBConverter(0, 0, 0));
+
+        //туловище
+        display.fillEllipse(150, 150, 50, 80, bit16RGBConverter(255, 255, 255));
+
+        //ноги
+        display.fillRect(85, 170, 65, 10, bit16RGBConverter(255, 255, 255));
+        display.fillRect(85, 180, 10, 10, bit16RGBConverter(255, 255, 255));
+        display.fillRect(150, 170, 65, 10, bit16RGBConverter(255, 255, 255));
+        display.fillRect(205, 180, 10, 10, bit16RGBConverter(255, 255, 255));
+
+        if (i % 2 == 0)
+        {
+            //руки вверх
+            display.fillRect(85, 130, 65, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(85, 120, 10, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(150, 130, 65, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(205, 120, 10, 10, bit16RGBConverter(255, 255, 255));
+        }
+        else
+        {
+            //руки вниз
+            display.fillRect(85, 130, 65, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(85, 140, 10, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(150, 130, 65, 10, bit16RGBConverter(255, 255, 255));
+            display.fillRect(205, 140, 10, 10, bit16RGBConverter(255, 255, 255));
+        }
+
+        Sleep(500);
+    }
 
 
     /*
