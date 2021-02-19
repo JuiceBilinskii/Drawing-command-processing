@@ -3,10 +3,35 @@ from UDPServer.message_parser import MessageParser
 
 
 class MyTestCase(unittest.TestCase):
-    def test_correct_message(self):
+    def test_correct_clear_display(self):
         parser = MessageParser()
         parser.parse(b'%cd_000000@')
         self.assertEqual((b'cd', b'000000'), parser.parsed_message)
+
+    def test_correct_draw_line(self):
+        parser = MessageParser()
+        parser.parse(b'%dl_34_56_78_30_000000@')
+        self.assertEqual((b'dl', 34, 56, 78, 30, b'000000'), parser.parsed_message)
+
+    def test_correct_draw_rect(self):
+        parser = MessageParser()
+        parser.parse(b'%dr_34_56_78_30_000000@')
+        self.assertEqual((b'dr', 34, 56, 78, 30, b'000000'), parser.parsed_message)
+
+    def test_correct_fill_rect(self):
+        parser = MessageParser()
+        parser.parse(b'%fr_34_56_78_30_000000@')
+        self.assertEqual((b'fr', 34, 56, 78, 30, b'000000'), parser.parsed_message)
+
+    def test_correct_draw_ellipse(self):
+        parser = MessageParser()
+        parser.parse(b'%de_34_56_78_30_000000@')
+        self.assertEqual((b'de', 34, 56, 78, 30, b'000000'), parser.parsed_message)
+
+    def test_correct_fill_ellipse(self):
+        parser = MessageParser()
+        parser.parse(b'%fe_34_56_78_30_000000@')
+        self.assertEqual((b'fe', 34, 56, 78, 30, b'000000'), parser.parsed_message)
 
     def test_correct_message_1(self):
         parser = MessageParser()
