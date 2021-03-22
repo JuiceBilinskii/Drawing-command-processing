@@ -1,5 +1,5 @@
 from tkinter import *
-from PIL import Image, ImageTk, ImageDraw
+from PIL import Image, ImageTk
 from UDPServer.drawer import Drawer
 import threading
 
@@ -9,7 +9,8 @@ def receiving():
     from message_parser import MessageParser
     from command_converter import CommandConverter
 
-    UDP_IP = "127.0.0.2"
+    # UDP_IP = "192.168.0.32"
+    UDP_IP = "192.168.1.121"
     UDP_PORT = 5005
 
     sock = socket.socket(socket.AF_INET,  # Internet
@@ -19,7 +20,7 @@ def receiving():
     parser = MessageParser()
 
     while True:
-        data, address = sock.recvfrom(50)
+        data, address = sock.recvfrom(1024)
         print(data)
 
         parser.parse(data)

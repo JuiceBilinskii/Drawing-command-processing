@@ -1,6 +1,3 @@
-import functionality
-
-
 class CommandConverter:
     @staticmethod
     def convert_command(parsed_attributes):
