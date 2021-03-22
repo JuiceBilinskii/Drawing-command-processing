@@ -1,24 +1,23 @@
-from tkinter import Canvas
+from PIL import Image, ImageTk, ImageDraw
 
 
 class Drawer:
-    def __init__(self, canvas: Canvas):
-        self._canvas = canvas
+    def __init__(self, image):
+        self._img_size = image.size
+        self._draw_surface = ImageDraw.Draw(image)
 
     def draw(self, command: tuple):
         if command[0] == b'cd':
-            self._canvas.delete('all')
-            self._canvas.configure(bg=command[1])
+            self._draw_surface.rectangle((0, 0) + self._img_size, fill=command[1])
         elif command[0] == b'dp':
-            self._canvas.create_line(*command[1:-1], fill=command[-1])
+            self._draw_surface.point(command[1:-1], fill=command[-1])
         elif command[0] == b'dl':
-            self._canvas.create_line(*command[1:-1], fill=command[-1])
+            self._draw_surface.line(command[1:-1], fill=command[-1])
         elif command[0] == b'dr':
-            self._canvas.create_rectangle(*command[1:-1], outline=command[-1])
+            self._draw_surface.rectangle(command[1:-1], outline=command[-1])
         elif command[0] == b'fr':
-            self._canvas.create_rectangle(*command[1:-1], outline=command[-1], fill=command[-1])
+            self._draw_surface.rectangle(command[1:-1], outline=command[-1], fill=command[-1])
         elif command[0] == b'de':
-            self._canvas.create_oval(*command[1:-1], outline=command[-1])
+            self._draw_surface.ellipse(command[1:-1], outline=command[-1])
         elif command[0] == b'fe':
-            self._canvas.create_oval(*command[1:-1], outline=command[-1], fill=command[-1])
-            # w.create_line(event.x, event.y, event.x + 1, event.y, fill="#ff0000")
+            self._draw_surface.ellipse(command[1:-1], outline=command[-1], fill=command[-1])

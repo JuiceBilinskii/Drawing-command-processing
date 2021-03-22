@@ -99,35 +99,3 @@ class MessageParser:
         if (not self._error) and (self._command is None):
             self._error = True
             self._message = 'Command %s not found' % line[0]
-
-
-def _test(text):
-    parser = MessageParser()
-    parser.parse(text)
-
-    print('packet:', text)
-    if parser.error:
-        print('Error: ', parser.message)
-    else:
-        print('command:', parser.parsed_message)
-
-
-if __name__ == '__main__':
-    _test(b'%cd_000000@')
-
-    _test(b'%dp_100_200_000001@')
-    _test(b'%dl_130_240_10_20_000001@')
-
-    _test(b'%dr_100_200_300_300_000002@')
-    _test(b'%fr_100_200_300_300_000003@')
-
-    _test(b'%de_100_200_30_20_000004@')
-    _test(b'%fe_100_200_40_50_000005@')
-
-    _test(b'%c0_000000@')
-    _test(b'%cd_000000')
-    _test(b'cd_000000@')
-    _test(b'%cd_12_000000@')
-    _test(b'%fe_100_200_40_000005@')
-    _test(b'%cd_00000w@')
-    _test(b'%fe_100_a200_40_50_000005@')
