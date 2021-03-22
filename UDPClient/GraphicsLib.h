@@ -31,4 +31,4 @@ private:
     int_least16_t width, height; //screen size
 };
 
-#endif //GraphicsLib_h
+#endif GraphicsLib_h
